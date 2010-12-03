@@ -1,0 +1,108 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
+import os
+import sys
+import re
+import signal
+from optparse import OptionParser
+
+
+
+
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+signal.signal(signal.SIGUSR1, signal.SIG_DFL)
+
+
+
+
+
+usage	= '%prog [OPTIONS] [MOT_CLEF_1 MOT_CLEF_2...]'
+parser	= OptionParser(usage, add_help_option = False)
+
+parser.add_option('-h', '--help', action='help', help='Affiche cette aide et termine le programme')
+parser.add_option('-c', '--clean-screen', action='store_true', dest='clean_screen', default=False, help='Nettoie l\'ecran avant d\'afficher la sortie')
+parser.add_option('-i', '--ignore-case', action='store_true', dest='ignore_case', default=False, help='Rend la coloration insensible a la casse')
+
+(options, args) = parser.parse_args()
+
+
+
+if options.clean_screen == True:
+	sys.stdout.write('\x1bc')
+
+
+
+i			= 0
+tab_keyword	= []
+tab_color	= [31, 32, 33, 34, 35, 36, 41, 42, 43, 44, 45, 46]
+
+for keyword in args:
+	tab_keyword.append({'word': keyword, 'color': tab_color[i]})
+	
+	i = (i + 1) % len(tab_color)
+
+
+
+
+while True:
+	try:
+		iterator	= []
+		line		= sys.stdin.readline()
+		len_line	= len(line)
+		
+		for i in range(0, len_line + 1):
+			iterator.append([])
+
+		if line != '':
+			if len(tab_keyword) > 0:
+				for keyword in tab_keyword:
+					if options.ignore_case == True:
+						tab_match = re.finditer(keyword['word'], line, flags=re.IGNORECASE)
+					else:
+						tab_match = re.finditer(keyword['word'], line)
+					
+					for match in tab_match:
+						span = list(match.span())
+						span[1] -= 1
+						
+						if span[0] == span[1]:
+							iterator[span[0]].append(keyword['color'])
+						else:
+							for j in range(span[0], span[1] + 1):
+								iterator[j].append(keyword['color'])
+				
+				last_color	= None
+				pos_decal	= 0
+				
+				for j in range(0, len_line + 1):
+					pos = j + pos_decal
+					
+					if last_color == None and len(iterator[j]) == 0:
+						continue
+					
+					if len(iterator[j]) == 0:
+						last_color	= None
+						line		= line[:pos] +'\x1b[0m'+ line[pos:]
+						pos_decal	+= 4
+						continue
+					
+					color = str(iterator[j][-1])
+					
+					if color == last_color:
+						continue
+					
+					last_color	= color
+					line		= line[:pos] +'\x1b[1;'+ color +'m'+ line[pos:]
+					pos_decal	+= 5 + len(color)
+			
+			sys.stdout.write(line)
+		else:
+			sys.exit(0)
+	except IOError:
+		sys.exit(0)
+
+
+
+
