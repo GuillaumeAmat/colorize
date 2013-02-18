@@ -7,8 +7,7 @@ Script Python permettant de colorer des sorties standards, des fichiers textes, 
 
 `colorize [OPTIONS] [MOT_CLEF_1 MOT_CLEF_2...]`
 
-Options:
-
+Options :
 * -h, --help          Affiche cette aide et termine le programme
 * -c, --clean-screen  Nettoie l'ecran avant d'afficher la sortie
 * -i, --ignore-case   Rend la coloration insensible a la casse
