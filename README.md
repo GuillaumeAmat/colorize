@@ -1,20 +1,19 @@
 # Colorize
 
-Script Python permettant de colorer des sorties standards, des fichiers textes, etc.
+Standalone python script to colorize standard outputs, text files, etc.
 
+## Usage
 
-## Utilisation
-
-`colorize [OPTIONS] [MOT_CLEF_1 MOT_CLEF_2...]`
+`colorize [OPTIONS] [KEYWORD_1 KEYWORD_2...]`
 
 Options :
-* -h, --help          Affiche cette aide et termine le programme
-* -c, --clean-screen  Nettoie l'ecran avant d'afficher la sortie
-* -i, --ignore-case   Rend la coloration insensible a la casse
+* -h, --help          Display this help
+* -c, --clear-screen  Clear the screen before displaying the output
+* -i, --ignore-case   Colorize without taking care of the case
 
 
-## Exemple
+## Example
 
-`$ tail -f /var/log/httpd/error.log | colorize mot_clef_1 mot_clef_2 "[0-9]"`
+`$ tail -f /var/log/httpd/error.log | colorize keyword_1 keyword_2 "[0-9]"`
 
-`$ cat mon_fichier.txt | colorize -ci "mot clef avec des espaces"`
+`$ cat my_file.txt | colorize -ci "keyword with spaces"`
